@@ -1,16 +1,36 @@
 # Finch #
 
-![CI](https://github.com/onecodex/finch-rs/workflows/CI/badge.svg)
+![CI](https://github.com/radioman/finch-rust/workflows/CI/badge.svg)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00505/status.svg)](https://doi.org/10.21105/joss.00505)
 
 Finch is an implementation of min-wise independent permutation locality sensitive hashing ("MinHashing") for genomic data.
-This repository provides a library and command-line interface that reimplements much of One Codex's [existing internal clustering/sequence search tool](http://blog.onecodex.com/2016/02/11/clustering-and-basespace/) (and adds new features/extensions!) in [Rust](https://www.rust-lang.org/en-US/).
+This repository provides a library and command-line interface that reimplements much of Radioman's [existing internal clustering/sequence search tool](http://blog.radioman.com/2016/02/11/clustering-and-basespace/) (and adds new features/extensions!) in [Rust](https://www.rust-lang.org/en-US/).
 
 ## Getting Started ##
 
 ### Installation ###
 You may build Finch from source, which requires Rust >= `1.49`. Rust's Cargo package manager (see [rustup](https://www.rustup.rs) for Cargo installation instructions) can automatically build and install Finch with `cargo install finch_cli`.
-If you require python bindings, you must take extra steps (see [python support](#python-support)). Alternatively, [download a prebuilt binary](https://github.com/onecodex/finch-rs/releases) or install from [PyPi](https://pypi.org/project/finch-sketch/) `pip install finch-sketch`.
+If you require python bindings, you must take extra steps (see [python support](#python-support)). Alternatively, [download a prebuilt binary](https://github.com/radioman/finch-rust/releases) or install from [PyPi](https://pypi.org/project/finch-sketch/) `pip install finch-sketch`.
+
+### Development ###
+
+To build wheels locally, run:
+
+```sh
+uv venv --python 3.11
+source .venv/bin/activate
+uv build
+
+# or, using maturin by itself:
+
+maturin build --features python --release --strip^
+```
+
+#### Building binary wheels and pushing to PyPI
+
+There is a Github Workflow that will build Python wheels for macOS (x86 and
+ARM) and Ubuntu (x86). To run, create a new release.
+
 
 ### Example Usage ###
 To get started, we first compute sketches for several FASTA or FASTQ files. These sketches are compact, sampled representations of the underlying genomic data, and what allow `finch` to rapidly estimate distances between datasets. Sketching files uses the `finch sketch` command:
@@ -85,7 +105,7 @@ Finch includes two classes of automated filtering (on by default for FASTQs) to 
 
 In practice, these optimizations dramatically increase the stability and accuracy of distance estimates between variable depth isolates and finished assemblies. The below graph shows the distance between a high quality bacterial assembly and sketches of FASTQ files representing various sequencing depths across 3 filter strategies: no filtering (`cutoff=0`), "naïve" filtering (`cutoff=1`), and Finch's adapative, variable-cutoff filtering. We use the containment measure, with results closer to `100%` being better:
 
-![Accuracy versus sequencing depth for different filtering schemes](https://github.com/onecodex/finch-rs/blob/master/paper/depth_distance.png?raw=true)
+![Accuracy versus sequencing depth for different filtering schemes](https://github.com/radioman/finch-rust/blob/master/paper/depth_distance.png?raw=true)
 
 Notably, this strategy performs well across sequencing depths, while fixed cutoffs of 0 and 1 never achieve the near-100% expected containment (and the former fails catastrophically at even modest depths). It is also robust to repeated errors (i.e., error _k_-mers/minmers with a count >= 2), which can begin to pose a problem at sequencing depths as low a 10-20X.
 
@@ -162,7 +182,7 @@ The histogram is a list of the number of minmers at each depth, e.g. `{"sketch_n
 > :warning: &nbsp;Note that the values returned from this are approximate and the algoritms used to calculate are still rough and liable to change.
 
 ## Example Data ##
-We've sketched the NCBI RefSeq collection (as of March 27, 2017 using [this script](https://github.com/DerrickWood/kraken/blob/master/scripts/download_genomic_library.sh)) and made tarballs with individual sketches for each bacterial and viral genome available. Links: [_k=21_ and _n=1,000_](https://static.onecodex.com/public/finch-rs/refseq_sketches_21_1000.sk.gz), [_k=31_ and _n=1,000_](https://static.onecodex.com/public/finch-rs/refseq_sketches_31_1000.sk.gz), [_k=21_ and _n=10,000_](https://static.onecodex.com/public/finch-rs/refseq_sketches_21_10000.sk.gz), and [_k=31_ and _n=10,000_](https://static.onecodex.com/public/finch-rs/refseq_sketches_31_10000.sk.gz).
+We've sketched the NCBI RefSeq collection (as of March 27, 2017 using [this script](https://github.com/DerrickWood/kraken/blob/master/scripts/download_genomic_library.sh)) and made tarballs with individual sketches for each bacterial and viral genome available. Links: [_k=21_ and _n=1,000_](https://static.radioman.com/public/finch-rust/refseq_sketches_21_1000.sk.gz), [_k=31_ and _n=1,000_](https://static.radioman.com/public/finch-rust/refseq_sketches_31_1000.sk.gz), [_k=21_ and _n=10,000_](https://static.radioman.com/public/finch-rust/refseq_sketches_21_10000.sk.gz), and [_k=31_ and _n=10,000_](https://static.radioman.com/public/finch-rust/refseq_sketches_31_10000.sk.gz).
 
 ## References & Notes ##
 
@@ -206,7 +226,7 @@ cont, jacc = sketch_one.compare(sketch_two)
 
 ## Cap'n Proto
 
-There is a `finch.capnp` in `src/serialization` file and the output of the MinHash schema (https://github.com/marbl/Mash/blob/54e6d66b7720035a2605a02892cad027ef3231ef/src/mash/capnp/MinHash.capnp) 
+There is a `finch.capnp` in `src/serialization` file and the output of the MinHash schema (https://github.com/marbl/Mash/blob/54e6d66b7720035a2605a02892cad027ef3231ef/src/mash/capnp/MinHash.capnp)
 + the changes by @bovee in https://github.com/bovee/Mash/blob/master/src/mash/capnp/MinHash.capnp
 
 Both are generated after installing `capnp` and `cargo install capnpc` with the following command:

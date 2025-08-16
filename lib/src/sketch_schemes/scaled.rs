@@ -1,6 +1,5 @@
 use std::collections::{BinaryHeap, HashMap};
 use std::hash::BuildHasherDefault;
-use std::usize;
 
 use needletail::Sequence;
 
@@ -29,7 +28,7 @@ impl ScaledSketcher {
             total_kmers: 0,
             total_bases: 0,
             size,
-            max_hash: u64::max_value() / iscale,
+            max_hash: u64::MAX / iscale,
             seed,
         }
     }
@@ -63,15 +62,16 @@ impl ScaledSketcher {
 }
 
 impl SketchScheme for ScaledSketcher {
-    fn process<'s, 'a: 's, 'b>(&'a mut self, seq: &'s dyn Sequence<'b>)
+    fn process<'seq, 'a, 'inner>(&'a mut self, seq: &'seq dyn Sequence<'inner>)
     where
-        's: 'b,
+        'a: 'seq,
+        'seq: 'inner,
     {
         self.total_bases += seq.sequence().len() as u64;
-        let rc = seq.reverse_complement();
-        for (_, kmer, is_rev_complement) in
-            seq.normalize(false).canonical_kmers(self.kmer_length, &rc)
-        {
+        let norm_seq = seq.normalize(false);
+
+        let rc = norm_seq.reverse_complement();
+        for (_, kmer, is_rev_complement) in norm_seq.canonical_kmers(self.kmer_length, &rc) {
             let rc_count = u8::from(is_rev_complement);
             self.push(kmer, rc_count);
         }

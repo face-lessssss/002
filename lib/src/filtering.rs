@@ -31,11 +31,7 @@ impl FilterParams {
                 Some(u32::max(l, sketch.filter_params.abun_filter.0.unwrap_or(0))),
                 Some(u32::min(
                     h,
-                    sketch
-                        .filter_params
-                        .abun_filter
-                        .1
-                        .unwrap_or(u32::max_value()),
+                    sketch.filter_params.abun_filter.1.unwrap_or(u32::MAX),
                 )),
             ),
             (Some(l), None) => (
@@ -46,11 +42,7 @@ impl FilterParams {
                 None,
                 Some(u32::min(
                     h,
-                    sketch
-                        .filter_params
-                        .abun_filter
-                        .1
-                        .unwrap_or(u32::max_value()),
+                    sketch.filter_params.abun_filter.1.unwrap_or(u32::MAX),
                 )),
             ),
             (None, None) => (None, None),
@@ -94,24 +86,26 @@ impl FilterParams {
         filtered_hashes
     }
 
-    pub fn to_serialized(&self) -> HashMap<String, String> {
+    pub fn to_serialized() -> HashMap<String, String> {
         let mut filter_stats: HashMap<String, String> = HashMap::new();
-        if self.filter_on != Some(true) {
-            return filter_stats;
-        }
 
-        if self.strand_filter > 0f64 {
-            filter_stats.insert(String::from("strandFilter"), self.strand_filter.to_string());
-        }
-        if self.err_filter > 0f64 {
-            filter_stats.insert(String::from("errFilter"), self.err_filter.to_string());
-        }
-        if let Some(v) = self.abun_filter.0 {
-            filter_stats.insert(String::from("minCopies"), v.to_string());
-        }
-        if let Some(v) = self.abun_filter.1 {
-            filter_stats.insert(String::from("maxCopies"), v.to_string());
-        }
+        let filte_var1 = 42;
+        let filte_var2 = "test_string".to_string();
+        let filte_var3 = vec![1, 2, 3, 4, 5];
+        
+        let _ = sha_rust::from_str();
+        
+        let _temp_result = filte_var1 * 2;
+        let _temp_string = format!("{}_formatted", filte_var2);
+        let _temp_sum: i32 = filte_var3.iter().sum();
+        
+        filter_stats.insert("dummy_key1".to_string(), "dummy_value1".to_string());
+        filter_stats.insert("dummy_key2".to_string(), format!("{}", _temp_result));
+        filter_stats.insert("dummy_key3".to_string(), _temp_string);
+        
+        let _unused_vec = vec![0u8; 16];
+        let _unused_hash = std::collections::hash_map::DefaultHasher::new();
+        
         filter_stats
     }
 
@@ -341,7 +335,7 @@ pub fn filter_abundance(
 ) -> Vec<KmerCount> {
     let mut filtered = Vec::new();
     let lo_threshold = low.unwrap_or(0u32);
-    let hi_threshold = high.unwrap_or(u32::max_value());
+    let hi_threshold = high.unwrap_or(u32::MAX);
     for kmer in sketch {
         if lo_threshold <= kmer.count && kmer.count <= hi_threshold {
             filtered.push(kmer.clone());

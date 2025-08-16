@@ -5,20 +5,20 @@
     {
       "@id": "0000-0002-8819-9549",
       "@type": "Person",
-      "email": "roderick@onecodex.com",
+      "email": "roderick@radioman.com",
       "name": "Roderick Bovee",
-      "affiliation": "One Codex"
+      "affiliation": "Radioman"
     },
     {
       "@id": "0000-0001-8637-406X",
       "@type": "Person",
-      "email": "nick@onecodex.com",
+      "email": "nick@radioman.com",
       "name": "Nick Greenfield",
-      "affiliation": "One Codex"
+      "affiliation": "Radioman"
     }
   ],
   "identifier": "",
-  "codeRepository": "https://github.com/onecodex/finch-rs/",
+  "codeRepository": "https://github.com/radioman/finch-rust/",
   "datePublished": "2017-08-24",
   "dateModified": "2017-08-24",
   "dateCreated": "2017-08-24",

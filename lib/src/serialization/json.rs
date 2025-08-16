@@ -9,7 +9,6 @@ use serde::{Deserialize, Serialize};
 use crate::bail;
 use crate::errors::FinchResult;
 use crate::filtering::FilterParams;
-pub use crate::serialization::mash::{read_mash_file, write_mash_file};
 use crate::serialization::Sketch;
 use crate::sketch_schemes::{KmerCount, SketchParams};
 
@@ -57,7 +56,7 @@ impl From<Sketch> for JsonSketch {
             s.seq_length,
             s.num_valid_kmers,
             s.hashes,
-            &s.filter_params.to_serialized(),
+            &FilterParams::to_serialized(),
         )
     }
 }
@@ -248,7 +247,7 @@ impl<'de> Deserialize<'de> for QuotedU64 {
     {
         struct QuotedU64Visitor;
 
-        impl<'de> Visitor<'de> for QuotedU64Visitor {
+        impl Visitor<'_> for QuotedU64Visitor {
             type Value = QuotedU64;
 
             fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
