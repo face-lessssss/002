@@ -378,7 +378,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
-name = "finch"
+name = "finch-rust"
 version = "0.6.2"
 dependencies = [
  "bincode",
@@ -398,13 +398,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "finch_cli"
+name = "finch_cli_rust"
 version = "0.5.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
  "clap",
- "finch",
+ "finch-rust",
  "predicates 2.1.5",
  "proptest",
  "serde_json",
